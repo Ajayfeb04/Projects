@@ -41,6 +41,7 @@ res.cookie("token", token, {
 });
 res.status(201).json({
     message:"user registered successfully",
+    token: token,
     user:{
         id: user._id,
         username:user.username,
@@ -76,6 +77,7 @@ res.cookie("token", token, {
 });
 res.status(200).json({
     message:"user loggedIn successfully",
+    token: token,
     user:{
         id:user._id,
         username: user.username,

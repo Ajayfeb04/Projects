@@ -92,7 +92,7 @@ Rules:
 `;
 
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash", // Correct model name
+        model: "gemini-3.6-flash", // Correct model name
         contents: prompt,
         config: {
             responseMimeType: "application/json",
@@ -143,7 +143,7 @@ The content should be ATS friendly, i.e. it should be easily parsable by ATS sys
 The resume should not be so lengthy, it should ideally be 1-2 pages long when converted to PDF. Focus on quality rather than quantity and make sure to include all the relevant information that can increase the candidate's chances of getting an interview call for the given job description.`;
 
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: prompt,
         config: {
             responseMimeType: "application/json",

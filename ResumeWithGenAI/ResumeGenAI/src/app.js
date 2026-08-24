@@ -9,9 +9,12 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin:"https://resume-gen-ai-frontend.onrender.com",
-    credentials:true
-}))
+    origin: [
+        "http://localhost:5173",
+        "https://resume-gen-ai-frontend.onrender.com"
+    ],
+    credentials: true
+}));
 // require all the routes here 
 const authRouter = require("./routes/auth.routes")
 const interviewRouter = require("./routes/interview.routes")

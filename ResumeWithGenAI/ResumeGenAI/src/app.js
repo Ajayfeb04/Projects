@@ -14,7 +14,8 @@ app.use(cors({
         "http://localhost:5173",
         "https://resume-gen-ai-frontend.onrender.com"
     ],
-    credentials: true
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 // require all the routes here 
 const authRouter = require("./routes/auth.routes")

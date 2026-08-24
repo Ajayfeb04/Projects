@@ -1,6 +1,5 @@
 const { GoogleGenAI } = require("@google/genai");
-const { z } = require("zod");
-const puppeteer = require("puppeteer");
+const html_to_pdf = require("html-pdf-node");
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
@@ -60,11 +59,6 @@ Rules:
 - preparationPlan must contain at least 7 days.
 - matchScore must be a number between 0 and 100.
 - severity must be only "low", "medium", or "high".
-- technicalQuestions must be an array of objects, not an array of strings.
-- behavioralQuestions must be an array of objects, not an array of strings.
-- skillGaps must be an array of objects, not an array of strings.
-- preparationPlan must be an array of objects, not an array of strings.
-- tasks must be an array of strings.
 `;
 
     const response = await ai.models.generateContent({
@@ -78,47 +72,20 @@ Rules:
     return JSON.parse(response.text);
 }
 
-async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch({
-        headless: "new",
-        args: [
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-dev-shm-usage",
-            "--disable-gpu",
-            "--no-zygote",
-            "--single-process"
-        ]
-    });
+function generatePdfFromHtml(htmlContent) {
+    const options = { format: "A4", printBackground: true };
+    const file = { content: htmlContent };
 
-    try {
-        const page = await browser.newPage();
-        await page.setContent(htmlContent, { waitUntil: "domcontentloaded" });
-
-        const pdfBuffer = await page.pdf({
-            format: "A4",
-            printBackground: true,
-            margin: {
-                top: "10mm",
-                bottom: "10mm",
-                left: "10mm",
-                right: "10mm"
-            }
-        });
-
-        return pdfBuffer;
-    } finally {
-        await browser.close();
-    }
+    return html_to_pdf.generatePdf(file, options);
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
-    const prompt = `Generate a modern, clean HTML resume tailored for this job description.
+    const prompt = `Generate a clean, modern HTML resume tailored for this job description.
 Candidate Resume: ${resume}
 Candidate Self Description: ${selfDescription}
 Target Job Description: ${jobDescription}
 
-Return ONLY clean HTML code directly (start with <!DOCTYPE html> and end with </html>). Do not wrap inside JSON. Do not include markdown code ticks (\`\`\`html). Use inline CSS for clean styling suitable for A4 print.`;
+Return ONLY direct HTML code starting with <!DOCTYPE html> and ending with </html>. Use clean inline CSS styling suitable for A4 printable resume. Do not wrap in JSON.`;
 
     const response = await ai.models.generateContent({
         model: "gemini-3.6-flash",
